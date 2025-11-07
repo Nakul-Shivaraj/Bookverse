@@ -1,0 +1,176 @@
+.home-container {
+  text-align: center;
+  padding: 40px 0;
+  background-color: #faf9f6;
+}
+
+h2 {
+  margin-top: 50px;
+  font-size: 1.6rem;
+  color: #1a472a;
+  text-align: center;
+  margin-bottom: 30px;
+  position: relative;
+}
+
+h2::after {
+  content: "";
+  width: 80px;
+  height: 3px;
+  background-color: #2d6a4f;
+  display: block;
+  margin: 8px auto 0;
+  border-radius: 2px;
+}
+
+.book-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(260px, 1fr));
+  gap: 30px;
+  justify-items: center;
+  margin-top: 20px;
+  width: 100%;
+  max-width: 1200px;
+  margin-left: auto;
+  margin-right: auto;
+  padding-bottom: 60px;
+}
+
+/* 🔍 Search Bar + Genre Filter Styling */
+.filter-bar {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  gap: 15px;
+  margin-bottom: 30px;
+  margin-top: 10px;
+}
+
+.search-input {
+  width: 60%;
+  max-width: 400px;
+  padding: 10px 12px;
+  border: 1px solid #ccc;
+  border-radius: 6px;
+  font-size: 0.95rem;
+  transition: all 0.2s;
+}
+
+.search-input:focus {
+  border-color: #2d6a4f;
+  box-shadow: 0 0 4px rgba(45, 106, 79, 0.4);
+  outline: none;
+}
+
+.genre-buttons {
+  display: flex;
+  flex-wrap: wrap;
+  justify-content: center;
+  gap: 8px;
+}
+
+.genre-btn {
+  background-color: #e9f5ee;
+  color: #1a472a;
+  border: 1px solid #bcd6c5;
+  padding: 7px 14px;
+  border-radius: 20px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  transition: all 0.2s;
+}
+
+.genre-btn:hover {
+  background-color: #cfe9d9;
+}
+
+.genre-btn.active {
+  background-color: #2d6a4f;
+  color: white;
+  border-color: #2d6a4f;
+}
+
+/* 📊 Sort Dropdown */
+.sort-container {
+  margin-top: 5px;
+  display: flex;
+  align-items: center;
+  gap: 8px;
+  background-color: #f5f7f5;
+  padding: 6px 12px;
+  border-radius: 8px;
+  border: 1px solid #c8d8cc;
+}
+
+.sort-container label {
+  color: #1a472a;
+  font-weight: 500;
+}
+
+.sort-container select {
+  border: none;
+  background: transparent;
+  font-size: 0.95rem;
+  color: #2d6a4f;
+  font-weight: 500;
+  cursor: pointer;
+  outline: none;
+}
+
+/* ✨ Fade-in Animation for Cards */
+.fade-grid {
+  animation: fadeIn 0.3s ease-in-out;
+}
+
+.fade-item {
+  opacity: 0;
+  animation: fadeUp 0.4s ease-in forwards;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+/* 📊 Stats Bar */
+.stats-bar {
+  display: flex;
+  justify-content: center;
+  gap: 40px;
+  align-items: center;
+  background-color: #f6faf7;
+  padding: 10px 20px;
+  margin: 15px auto 25px auto;
+  border-radius: 10px;
+  width: fit-content;
+  border: 1px solid #cde3d3;
+  box-shadow: 0 2px 5px rgba(0, 0, 0, 0.05);
+  animation: fadeIn 0.6s ease-in-out;
+}
+
+.stats-bar p {
+  margin: 0;
+  color: #1a472a;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
+.stats-bar strong {
+  color: #2d6a4f;
+  font-size: 1.1rem;
+}
