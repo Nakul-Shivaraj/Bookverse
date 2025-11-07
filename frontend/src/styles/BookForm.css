@@ -7,6 +7,7 @@
   margin: 40px auto 20px;
   text-align: left;
   transition: transform 0.2s ease, box-shadow 0.3s ease;
+  animation: fadeUp 0.4s ease-in-out;
 }
 
 .book-form:hover {
@@ -65,4 +66,37 @@
   text-align: center;
   font-weight: 500;
   font-size: 0.9rem;
+}
+
+/* animation for form entry */
+@keyframes fadeUp {
+  0% {
+    opacity: 0;
+    transform: translateY(15px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.book-detail-buttons {
+  display: flex;
+  gap: 12px;
+  margin-top: 15px;
+}
+
+.edit-btn {
+  background-color: #2d6a4f;
+  color: #fff;
+  border: none;
+  padding: 8px 14px;
+  border-radius: 6px;
+  cursor: pointer;
+  font-weight: 500;
+  transition: background-color 0.2s ease;
+}
+
+.edit-btn:hover {
+  background-color: #1b4332;
 }

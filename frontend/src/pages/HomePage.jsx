@@ -1,7 +1,6 @@
 import React, { useEffect, useState } from "react";
 import { fetchBooks } from "../api/booksAPI";
 import BookCard from "../components/BookCard";
-import BookForm from "../components/BookForm";
 import "../styles/HomePage.css";
 
 export default function HomePage() {
@@ -11,16 +10,21 @@ export default function HomePage() {
   const [selectedGenre, setSelectedGenre] = useState("All");
   const [sortBy, setSortBy] = useState("Latest");
 
-  // 🔹 NEW: stats
+  // 📊 Stats
   const [bookCount, setBookCount] = useState(0);
   const [avgRating, setAvgRating] = useState(0);
 
   const genres = ["All", "Fiction", "Sci-Fi", "Mystery", "History", "Fantasy", "Romance"];
 
+  // 🔹 Fetch all books from backend
   const getBooks = async () => {
-    const data = await fetchBooks();
-    setBooks(data);
-    setFilteredBooks(data);
+    try {
+      const data = await fetchBooks();
+      setBooks(data);
+      setFilteredBooks(data);
+    } catch (err) {
+      console.error("Error fetching books:", err);
+    }
   };
 
   useEffect(() => {
@@ -30,7 +34,7 @@ export default function HomePage() {
   useEffect(() => {
     let results = [...books];
 
-    // search filter
+    // 🔍 Search filter
     if (searchTerm.trim()) {
       const lower = searchTerm.toLowerCase();
       results = results.filter(
@@ -40,14 +44,14 @@ export default function HomePage() {
       );
     }
 
-    // genre filter
+    // 🎭 Genre filter
     if (selectedGenre !== "All") {
       results = results.filter(
         (b) => (b.genre || "").toLowerCase() === selectedGenre.toLowerCase()
       );
     }
 
-    // sort
+    // 🔃 Sorting
     switch (sortBy) {
       case "Rating":
         results.sort((a, b) => (b.rating || 0) - (a.rating || 0));
@@ -60,7 +64,7 @@ export default function HomePage() {
         break;
     }
 
-    // 🔹 NEW: update stats
+    // 📊 Stats update
     setBookCount(results.length);
     const totalRating = results.reduce((sum, b) => sum + (b.rating || 0), 0);
     setAvgRating(results.length ? (totalRating / results.length).toFixed(1) : 0);
@@ -70,11 +74,9 @@ export default function HomePage() {
 
   return (
     <div className="home-container">
-      <BookForm onBookAdded={getBooks} />
-
       <h2>Explore Books</h2>
 
-      {/* 🔹 STATS BAR */}
+      {/* 📊 Stats Bar */}
       <div className="stats-bar">
         <p>
           <strong>{bookCount}</strong> {bookCount === 1 ? "Book" : "Books"} Found
@@ -84,7 +86,7 @@ export default function HomePage() {
         </p>
       </div>
 
-      {/* Filters */}
+      {/* 🔍 Filters */}
       <div className="filter-bar">
         <input
           type="text"

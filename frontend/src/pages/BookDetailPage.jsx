@@ -1,8 +1,10 @@
 import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
-import { useParams, Link } from "react-router-dom";
-import { fetchBooks } from "../api/booksAPI";
+import { useParams, Link, useNavigate } from "react-router-dom";
+import { fetchBooks, deleteBook } from "../api/booksAPI";
+import EditBookForm from "../components/EditBookForm";
 import "../styles/BookDetailPage.css";
+import "../styles/BookForm.css";
 
 function Rating({ value }) {
   const v = Number(value) || 0;
@@ -16,6 +18,8 @@ function Rating({ value }) {
 export default function BookDetailPage() {
   const { id } = useParams();
   const [book, setBook] = useState(null);
+  const [isEditing, setIsEditing] = useState(false);
+  const navigate = useNavigate();
 
   useEffect(() => {
     fetchBooks()
@@ -26,27 +30,57 @@ export default function BookDetailPage() {
       .catch((err) => console.error(err));
   }, [id]);
 
-  if (!book) return <p style={{ textAlign: "center", marginTop: 40 }}>Loading book details…</p>;
+  if (!book) {
+    return <p style={{ textAlign: "center", marginTop: 40 }}>Loading book details…</p>;
+  }
 
   const placeholder = "https://placehold.co/200x300?text=No+Cover";
 
+  const handleDelete = async () => {
+    if (!window.confirm(`Are you sure you want to delete "${book.title}"?`)) return;
+
+    const success = await deleteBook(book._id);
+    if (success) {
+      alert("🗑️ Book deleted successfully!");
+      navigate("/"); // Go home after delete
+    } else {
+      alert("❌ Failed to delete book.");
+    }
+  };
+
   return (
     <div className="book-detail">
-      <img
-        src={book.coverImage || placeholder}
-        alt={book.title}
-        className="book-detail-img"
-      />
-      <div className="book-detail-info">
-        <h2>{book.title}</h2>
-        <p><strong>Author:</strong> {book.author}</p>
-        {book.genre && <p><strong>Genre:</strong> {book.genre}</p>}
-        <p><strong>Rating:</strong> <Rating value={book.rating} /></p>
-        {book.description && (
-          <p><strong>Description:</strong> {book.description}</p>
-        )}
-        <Link to="/" className="back-link">← Back to Home</Link>
-      </div>
+      {!isEditing ? (
+        <>
+          <img
+            src={book.coverImage || placeholder}
+            alt={book.title}
+            className="book-detail-img"
+          />
+          <div className="book-detail-info">
+            <h2>{book.title}</h2>
+            <p><strong>Author:</strong> {book.author}</p>
+            {book.genre && <p><strong>Genre:</strong> {book.genre}</p>}
+            <p><strong>Rating:</strong> <Rating value={book.rating} /></p>
+            {book.description && (
+              <p><strong>Description:</strong> {book.description}</p>
+            )}
+            <div className="book-detail-buttons">
+              <button className="edit-btn" onClick={() => setIsEditing(true)}>✏️ Edit</button>
+              <button className="delete-btn" onClick={handleDelete}>🗑️ Delete</button>
+              <Link to="/" className="back-link">← Back to Home</Link>
+            </div>
+          </div>
+        </>
+      ) : (
+        <EditBookForm
+          book={book}
+          onBookUpdated={(updated) => {
+            setBook(updated);
+            setIsEditing(false);
+          }}
+        />
+      )}
     </div>
   );
 }

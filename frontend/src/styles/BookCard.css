@@ -89,3 +89,21 @@
 .details-link:hover {
   color: #1b4332;
 }
+
+/* 🗑️ Delete Button Styling */
+.delete-btn {
+  margin-top: 8px;
+  background-color: #b93737;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  padding: 6px 10px;
+  font-size: 0.9rem;
+  cursor: pointer;
+  width: 100%;
+  transition: background-color 0.2s ease;
+}
+
+.delete-btn:hover {
+  background-color: #a12d2d;
+}

@@ -174,3 +174,9 @@ h2::after {
   color: #2d6a4f;
   font-size: 1.1rem;
 }
+
+body.modal-open {
+  overflow: hidden;
+  filter: blur(1px);
+  transition: filter 0.2s ease;
+}

@@ -1,17 +1,23 @@
 import React from "react";
-import { Link } from "react-router-dom";
+import PropTypes from "prop-types";
 import "../styles/Navbar.css";
 
-export default function Navbar() {
+export default function Navbar({ onAddBookClick }) {
   return (
     <nav className="navbar">
-      <div className="nav-logo">
-        <Link to="/" className="logo-text">📚 BookVerse</Link>
+      <div className="navbar-left">
+        <h1 className="logo">📚 BookVerse</h1>
       </div>
-      <div className="nav-links">
-        <Link to="/">Home</Link>
-        <Link to="/add">Add Book</Link> {/* optional future enhancement */}
+      <div className="navbar-right">
+        <a href="/">Home</a>
+        <button className="add-btn" onClick={onAddBookClick}>
+          Add Book
+        </button>
       </div>
     </nav>
   );
 }
+
+Navbar.propTypes = {
+  onAddBookClick: PropTypes.func.isRequired,
+};
