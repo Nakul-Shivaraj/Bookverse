@@ -47,6 +47,7 @@ export default function BookForm({ onBookAdded }) {
       rating: rating ? Number(rating) : null,
       coverImage: coverImage.trim() || null,
       description: description.trim() || null,
+      createdAt: new Date(),
     };
 
     try {

@@ -20,8 +20,8 @@ export default function Pagination({
         onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
         className="per-page"
       >
-        <option value={5}>5 per page</option>
-        <option value={10}>10 per page</option>
+        <option value={8}>8 per page</option>
+        <option value={12}>12 per page</option>
         <option value={20}>20 per page</option>
       </select>
 

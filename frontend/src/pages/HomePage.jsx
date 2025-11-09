@@ -88,6 +88,11 @@ export default function HomePage() {
     window.scrollTo({ top: 0, behavior: "smooth" });
   };
 
+  // Handle book deletion - refresh books
+  const handleBookDeleted = async () => {
+    await getBooks(); // Refresh the entire book list
+  };
+
   return (
     <div className="home-container">
       <h2>Explore Books</h2>
@@ -147,7 +152,7 @@ export default function HomePage() {
               className="fade-item"
               style={{ animationDelay: `${i * 0.05}s` }}
             >
-              <BookCard book={book} />
+              <BookCard book={book} onBookDeleted={handleBookDeleted} />
             </div>
           ))
         ) : (

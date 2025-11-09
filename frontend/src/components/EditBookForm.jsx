@@ -1,4 +1,5 @@
 import React, { useState } from "react";
+import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { updateBook } from "../api/booksAPI";
 import "../styles/BookForm.css";
@@ -16,7 +17,6 @@ export default function EditBookForm({ book, onBookUpdated }) {
   const [message, setMessage] = useState("");
   const navigate = useNavigate();
 
-  // handle form input changes
   const handleChange = (e) => {
     const value = e.target.name === 'rating' && e.target.value 
       ? Number(e.target.value) 
@@ -24,7 +24,6 @@ export default function EditBookForm({ book, onBookUpdated }) {
     setFormData({ ...formData, [e.target.name]: value });
   };
 
-  // handle submit (PUT request)
   const handleSubmit = async (e) => {
     e.preventDefault();
     try {
@@ -32,7 +31,6 @@ export default function EditBookForm({ book, onBookUpdated }) {
       if (updated) {
         setMessage("✅ Book updated successfully!");
         onBookUpdated(updated);
-        // redirect after short delay
         setTimeout(() => navigate("/"), 1000);
       } else {
         setMessage("❌ Failed to update book.");
@@ -94,3 +92,16 @@ export default function EditBookForm({ book, onBookUpdated }) {
     </div>
   );
 }
+
+EditBookForm.propTypes = {
+  book: PropTypes.shape({
+    _id: PropTypes.string.isRequired,
+    title: PropTypes.string,
+    author: PropTypes.string,
+    genre: PropTypes.string,
+    rating: PropTypes.oneOfType([PropTypes.number, PropTypes.string]),
+    coverImage: PropTypes.string,
+    description: PropTypes.string,
+  }).isRequired,
+  onBookUpdated: PropTypes.func.isRequired,
+};

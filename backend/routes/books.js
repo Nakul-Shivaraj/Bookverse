@@ -4,16 +4,31 @@ import { ObjectId } from "mongodb";
 
 const router = express.Router();
 
+// CREATE a new book
 router.post("/", async (req, res) => {
   try {
     const db = await connectDB();
-    const result = await db.collection("books").insertOne(req.body);
-    res.status(201).json(result);
+    
+    // Add timestamps
+    const newBook = {
+      ...req.body,
+      createdAt: new Date(),
+      updatedAt: new Date()
+    };
+    
+    const result = await db.collection("books").insertOne(newBook);
+    
+    // Return the created book with its ID
+    res.status(201).json({
+      _id: result.insertedId,
+      ...newBook
+    });
   } catch (err) {
     res.status(500).json({ error: err.message });
   }
 });
 
+// GET all books
 router.get("/", async (req, res) => {
   try {
     const db = await connectDB();
@@ -34,18 +49,22 @@ router.put("/:id", async (req, res) => {
       return res.status(400).json({ message: "Invalid ID format" });
     }
 
+    // Add updatedAt timestamp
+    const updateData = {
+      ...req.body,
+      updatedAt: new Date()
+    };
+
     const result = await db.collection("books").findOneAndUpdate(
       { _id: new ObjectId(id) },
-      { $set: req.body },
-      { returnDocument: "after", returnOriginal: false } // ✅ ensures updated doc is returned
+      { $set: updateData },
+      { returnDocument: "after" }
     );
 
-    // Note: depending on driver version, only one of these works.
     const updatedBook = result.value || result;
 
     if (!updatedBook) {
-      console.warn("⚠️ Book updated but no value returned");
-      return res.json({ message: "Book updated successfully (no doc returned)" });
+      return res.status(404).json({ message: "Book not found" });
     }
 
     res.json(updatedBook);
@@ -65,13 +84,17 @@ router.delete("/:id", async (req, res) => {
       return res.status(400).json({ message: "Invalid ID format" });
     }
 
+    // Also delete all reviews for this book
+    await db.collection("reviews").deleteMany({ bookId: id });
+
+    // Delete the book
     const result = await db.collection("books").deleteOne({ _id: new ObjectId(id) });
 
     if (result.deletedCount === 0) {
       return res.status(404).json({ message: "Book not found" });
     }
 
-    res.json({ message: "✅ Book deleted successfully" });
+    res.json({ message: "✅ Book and its reviews deleted successfully" });
   } catch (error) {
     console.error("Error deleting book:", error);
     res.status(500).json({ message: "❌ Failed to delete book" });
