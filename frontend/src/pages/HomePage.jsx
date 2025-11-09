@@ -1,6 +1,7 @@
 import React, { useEffect, useState } from "react";
 import { fetchBooks } from "../api/booksAPI";
 import BookCard from "../components/BookCard";
+import Pagination from "../components/Pagination";
 import "../styles/HomePage.css";
 
 export default function HomePage() {
@@ -9,6 +10,10 @@ export default function HomePage() {
   const [searchTerm, setSearchTerm] = useState("");
   const [selectedGenre, setSelectedGenre] = useState("All");
   const [sortBy, setSortBy] = useState("Latest");
+
+  // 📄 Pagination
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(12);
 
   // 📊 Stats
   const [bookCount, setBookCount] = useState(0);
@@ -70,7 +75,18 @@ export default function HomePage() {
     setAvgRating(results.length ? (totalRating / results.length).toFixed(1) : 0);
 
     setFilteredBooks(results);
+    setCurrentPage(1); // Reset to page 1 when filters change
   }, [searchTerm, selectedGenre, sortBy, books]);
+
+  // 📄 Pagination calculations
+  const totalPages = Math.ceil(filteredBooks.length / itemsPerPage);
+  const startIdx = (currentPage - 1) * itemsPerPage;
+  const currentBooks = filteredBooks.slice(startIdx, startIdx + itemsPerPage);
+
+  const handlePageChange = (page) => {
+    setCurrentPage(page);
+    window.scrollTo({ top: 0, behavior: "smooth" });
+  };
 
   return (
     <div className="home-container">
@@ -124,8 +140,8 @@ export default function HomePage() {
 
       {/* 📚 Book Grid */}
       <div className="book-grid fade-grid">
-        {filteredBooks.length > 0 ? (
-          filteredBooks.map((book, i) => (
+        {currentBooks.length > 0 ? (
+          currentBooks.map((book, i) => (
             <div
               key={book._id}
               className="fade-item"
@@ -140,6 +156,21 @@ export default function HomePage() {
           </p>
         )}
       </div>
+
+      {/* 📄 Pagination */}
+      {filteredBooks.length > 0 && (
+        <Pagination
+          currentPage={currentPage}
+          totalPages={totalPages}
+          onPageChange={handlePageChange}
+          itemsPerPage={itemsPerPage}
+          onItemsPerPageChange={(val) => {
+            setItemsPerPage(val);
+            setCurrentPage(1);
+          }}
+          totalItems={filteredBooks.length}
+        />
+      )}
     </div>
   );
 }

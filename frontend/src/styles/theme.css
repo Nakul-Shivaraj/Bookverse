@@ -1,0 +1,43 @@
+/* Default Theme Variables */
+:root {
+  --navbar-bg: linear-gradient(90deg, #2d6a4f, #1b4332);
+  --background: #f7f5ed;
+  --text-color: #1b4332;
+  --button-bg: #2d6a4f;
+  --button-hover: #1b4332;
+  --accent: #ffd166;
+  --card-bg: #ffffff;
+}
+
+/* 🌿 Theme 1: Cozy Green + Cream */
+[data-theme="cozy"] {
+  --navbar-bg: linear-gradient(90deg, #2d6a4f, #1b4332);
+  --background: #f7f5ed;
+  --text-color: #1b4332;
+  --button-bg: #2d6a4f;
+  --button-hover: #1b4332;
+  --accent: #ffd166;
+  --card-bg: #ffffff;
+}
+
+/* 🍃 Theme 2: Sage Green + White */
+[data-theme="sage"] {
+  --navbar-bg: linear-gradient(90deg, #2d6a4f, #40916c);
+  --background: #f5f9f6;
+  --text-color: #081c15;
+  --button-bg: #40916c;
+  --button-hover: #2d6a4f;
+  --accent: #95d5b2;
+  --card-bg: #ffffff;
+}
+
+/* 🌑 Theme 3: Dark Mode */
+[data-theme="dark"] {
+  --navbar-bg: #0b2027;
+  --background: #081b1f;
+  --text-color: #d8f3dc;
+  --button-bg: #52b788;
+  --button-hover: #40916c;
+  --accent: #95d5b2;
+  --card-bg: #1b4332;
+}

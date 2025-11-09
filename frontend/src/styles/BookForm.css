@@ -1,78 +1,139 @@
 .book-form {
-  background: #ffffff;
-  border-radius: 14px;
-  box-shadow: 0 4px 20px rgba(0, 0, 0, 0.08);
-  padding: 30px 40px;
-  width: 420px;
-  margin: 40px auto 20px;
+  background: linear-gradient(135deg, #ffffff, #f9fdfb);
+  border-radius: 20px;
+  box-shadow: 0 8px 30px rgba(0, 0, 0, 0.12);
+  padding: 35px;
+  max-width: 550px;
+  width: 100%;
+  margin: 0 auto;
   text-align: left;
-  transition: transform 0.2s ease, box-shadow 0.3s ease;
-  animation: fadeUp 0.4s ease-in-out;
+  transition: all 0.3s ease;
+  animation: fadeUp 0.4s ease;
+  box-sizing: border-box;
+  border: 2px solid #e8f5e9;
 }
 
 .book-form:hover {
-  transform: translateY(-3px);
-  box-shadow: 0 6px 25px rgba(0, 0, 0, 0.1);
+  transform: translateY(-5px);
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.15);
 }
 
 .book-form h2 {
   color: #1a472a;
-  margin-bottom: 18px;
+  margin: 0 0 25px 0;
   text-align: center;
-  font-size: 1.5rem;
-  border-bottom: 2px solid #2d6a4f;
-  padding-bottom: 8px;
+  font-size: 1.8rem;
+  font-weight: 800;
+  position: relative;
+  padding-bottom: 15px;
+}
+
+.book-form h2::after {
+  content: "";
+  position: absolute;
+  bottom: 0;
+  left: 50%;
+  transform: translateX(-50%);
+  width: 80px;
+  height: 4px;
+  background: linear-gradient(90deg, #2d6a4f, #52b788);
+  border-radius: 2px;
 }
 
 .book-form form {
   display: flex;
   flex-direction: column;
-  gap: 12px;
+  gap: 18px;
 }
 
 .book-form input,
 .book-form textarea {
-  padding: 10px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  font-size: 14px;
-  transition: border-color 0.2s, box-shadow 0.2s;
+  width: 100%;
+  padding: 14px 16px;
+  border-radius: 12px;
+  border: 2px solid #e5e7eb;
+  font-size: 0.95rem;
+  font-family: inherit;
+  transition: all 0.3s ease;
+  box-sizing: border-box;
+  background: white;
 }
 
 .book-form input:focus,
 .book-form textarea:focus {
   outline: none;
   border-color: #2d6a4f;
-  box-shadow: 0 0 3px rgba(45, 106, 79, 0.4);
+  box-shadow: 0 0 0 4px rgba(45, 106, 79, 0.1);
+  transform: translateY(-2px);
+}
+
+.book-form input::placeholder,
+.book-form textarea::placeholder {
+  color: #9ca3af;
+}
+
+.book-form textarea {
+  resize: vertical;
+  min-height: 120px;
 }
 
 .book-form button {
-  padding: 10px;
-  background-color: #2d6a4f;
+  padding: 14px 20px;
+  background: linear-gradient(135deg, #2d6a4f, #40916c);
   color: white;
   border: none;
-  border-radius: 6px;
+  border-radius: 12px;
   cursor: pointer;
-  font-weight: 600;
-  transition: background-color 0.2s;
+  font-weight: 700;
+  font-size: 1rem;
+  transition: all 0.3s ease;
+  margin-top: 10px;
+  box-shadow: 0 4px 12px rgba(45, 106, 79, 0.25);
 }
 
-.book-form button:hover {
-  background-color: #1b4332;
+.book-form button:hover:not(:disabled) {
+  background: linear-gradient(135deg, #1b4332, #2d6a4f);
+  transform: translateY(-3px);
+  box-shadow: 0 6px 20px rgba(45, 106, 79, 0.35);
+}
+
+.book-form button:disabled {
+  opacity: 0.6;
+  cursor: not-allowed;
+  transform: none;
+}
+
+.book-form button:active:not(:disabled) {
+  transform: translateY(-1px);
 }
 
 .message {
-  margin-top: 10px;
+  margin-top: 18px;
   text-align: center;
-  font-weight: 500;
-  font-size: 0.9rem;
+  font-weight: 600;
+  font-size: 0.95rem;
+  padding: 12px 20px;
+  border-radius: 10px;
+  animation: slideIn 0.3s ease;
 }
 
-/* animation for form entry */
+.message:contains('✅') {
+  background: #d1fae5;
+  color: #065f46;
+  border: 2px solid #6ee7b7;
+}
+
+.message:contains('❌') {
+  background: #fee2e2;
+  color: #991b1b;
+  border: 2px solid #fca5a5;
+}
+
+/* Animation for form entry */
 @keyframes fadeUp {
   0% {
     opacity: 0;
-    transform: translateY(15px);
+    transform: translateY(30px);
   }
   100% {
     opacity: 1;
@@ -80,23 +141,57 @@
   }
 }
 
-.book-detail-buttons {
-  display: flex;
-  gap: 12px;
-  margin-top: 15px;
+@keyframes slideIn {
+  0% {
+    opacity: 0;
+    transform: translateX(-20px);
+  }
+  100% {
+    opacity: 1;
+    transform: translateX(0);
+  }
 }
 
-.edit-btn {
-  background-color: #2d6a4f;
-  color: #fff;
-  border: none;
-  padding: 8px 14px;
-  border-radius: 6px;
-  cursor: pointer;
-  font-weight: 500;
-  transition: background-color 0.2s ease;
+/* ==========================================
+   RESPONSIVE DESIGN
+========================================== */
+@media (max-width: 768px) {
+  .book-form {
+    padding: 30px 25px;
+    border-radius: 16px;
+  }
+
+  .book-form h2 {
+    font-size: 1.5rem;
+  }
+
+  .book-form input,
+  .book-form textarea {
+    padding: 12px 14px;
+  }
+
+  .book-form button {
+    padding: 12px 18px;
+  }
 }
 
-.edit-btn:hover {
-  background-color: #1b4332;
+@media (max-width: 480px) {
+  .book-form {
+    padding: 25px 20px;
+    border-radius: 14px;
+  }
+
+  .book-form h2 {
+    font-size: 1.3rem;
+  }
+
+  .book-form input,
+  .book-form textarea {
+    font-size: 0.9rem;
+    padding: 11px 13px;
+  }
+
+  .book-form button {
+    font-size: 0.95rem;
+  }
 }

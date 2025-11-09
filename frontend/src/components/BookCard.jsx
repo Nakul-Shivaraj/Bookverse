@@ -10,7 +10,7 @@ function Rating({ value }) {
   const stars = Array.from({ length: 5 }, (_, i) =>
     i < full ? "★" : "☆"
   ).join("");
-  return <span className="rating">{stars} {v ? `(${v})` : ""}</span>;
+  return <span className="rating">{stars} {v ? `(${v.toFixed(1)})` : ""}</span>;
 }
 
 export default function BookCard({ book, onBookDeleted }) {
@@ -45,14 +45,14 @@ export default function BookCard({ book, onBookDeleted }) {
       </div>
       <div className="book-info">
         <h3>{book.title}</h3>
-        <p className="author">{book.author}</p>
-        {book.genre && <p className="genre">{book.genre}</p>}
+        <p className="author">by {book.author}</p>
+        {book.genre && <span className="genre">{book.genre}</span>}
         <Rating value={book.rating} />
         <Link to={`/book/${book._id}`} className="details-link">
           View Details →
         </Link>
         <button className="delete-btn" onClick={handleDelete}>
-          🗑️ Delete
+          🗑️ Delete Book
         </button>
       </div>
     </div>

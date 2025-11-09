@@ -1,45 +1,90 @@
+/* 🌙 Overlay (centered backdrop with blur) */
 .modal-overlay {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 100%;
-  background: rgba(0, 0, 0, 0.55);
+  inset: 0;
+  background: rgba(0, 0, 0, 0.45);
+  backdrop-filter: blur(6px);
   display: flex;
   justify-content: center;
   align-items: center;
-  z-index: 1000;
-  animation: fadeIn 0.3s ease;
+  z-index: 2000;
+  animation: fadeIn 0.25s ease-in-out;
+  overflow: hidden;
 }
 
+/* 📦 Modal Container */
 .modal-content {
-  background: #fff;
-  border-radius: 10px;
-  padding: 30px 35px;
-  width: 450px;
-  max-height: 90vh;
+  background: #ffffff;
+  border-radius: 20px;
+  padding: 35px 40px 30px;
+  width: 440px;
+  max-width: 90vw;
+  max-height: 85vh;
   overflow-y: auto;
+  box-shadow: 0 12px 40px rgba(0, 0, 0, 0.2);
   position: relative;
-  animation: scaleUp 0.25s ease;
-  box-shadow: 0 4px 25px rgba(0, 0, 0, 0.25);
+  animation: slideUp 0.35s ease-out;
+  border-top: 5px solid #ffffff;
 }
 
-.modal-close {
-  position: absolute;
-  top: 10px;
-  right: 15px;
-  background: transparent;
-  border: none;
-  font-size: 1.3rem;
-  color: #2d6a4f;
-  cursor: pointer;
-  transition: color 0.2s;
+/* No horizontal scrollbar */
+.modal-content {
+  overflow-x: hidden;
 }
 
-.modal-close:hover {
+.modal-content::-webkit-scrollbar {
+  width: 6px;
+}
+.modal-content::-webkit-scrollbar-thumb {
+  background-color: #cde3d3;
+  border-radius: 4px;
+}
+
+/* 🏷 Header */
+.modal-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 15px;
+}
+
+.modal-header h2 {
+  margin: 0;
+  font-size: 1.4rem;
   color: #1b4332;
+  border-bottom: 2px solid #2d6a4f;
+  padding-bottom: 4px;
+  flex-grow: 1;
+  text-align: center;
+  font-weight: 600;
 }
 
+/* ❌ Close Button (modern round icon) */
+.close-btn {
+  background: #f0f3f1;
+  border: none;
+  color: #2d6a4f;
+  font-size: 1.2rem;
+  cursor: pointer;
+  border-radius: 50%;
+  width: 28px;
+  height: 28px;
+  line-height: 28px;
+  display: flex;
+  justify-content: center;
+  align-items: center;
+  transition: background 0.2s ease, transform 0.2s ease;
+  position: absolute;
+  top: 18px;
+  right: 18px;
+}
+
+.close-btn:hover {
+  background: #d3f0dc;
+  transform: scale(1.1);
+}
+
+/* ✨ Animations */
 @keyframes fadeIn {
   from {
     opacity: 0;
@@ -49,13 +94,13 @@
   }
 }
 
-@keyframes scaleUp {
+@keyframes slideUp {
   from {
-    transform: scale(0.95);
+    transform: translateY(40px);
     opacity: 0;
   }
   to {
-    transform: scale(1);
+    transform: translateY(0);
     opacity: 1;
   }
 }
