@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import { fetchBooks } from "../api/booksAPI";
 import BookCard from "../components/BookCard";
 import Pagination from "../components/Pagination";
@@ -19,7 +19,15 @@ export default function HomePage() {
   const [bookCount, setBookCount] = useState(0);
   const [avgRating, setAvgRating] = useState(0);
 
-  const genres = ["All", "Fiction", "Sci-Fi", "Mystery", "History", "Fantasy", "Romance"];
+  const genres = [
+    "All",
+    "Fiction",
+    "Sci-Fi",
+    "Mystery",
+    "History",
+    "Fantasy",
+    "Romance",
+  ];
 
   // 🔹 Fetch all books from backend
   const getBooks = async () => {
@@ -45,14 +53,14 @@ export default function HomePage() {
       results = results.filter(
         (b) =>
           b.title.toLowerCase().includes(lower) ||
-          b.author.toLowerCase().includes(lower)
+          b.author.toLowerCase().includes(lower),
       );
     }
 
     // 🎭 Genre filter
     if (selectedGenre !== "All") {
       results = results.filter(
-        (b) => (b.genre || "").toLowerCase() === selectedGenre.toLowerCase()
+        (b) => (b.genre || "").toLowerCase() === selectedGenre.toLowerCase(),
       );
     }
 
@@ -72,7 +80,9 @@ export default function HomePage() {
     // 📊 Stats update
     setBookCount(results.length);
     const totalRating = results.reduce((sum, b) => sum + (b.rating || 0), 0);
-    setAvgRating(results.length ? (totalRating / results.length).toFixed(1) : 0);
+    setAvgRating(
+      results.length ? (totalRating / results.length).toFixed(1) : 0,
+    );
 
     setFilteredBooks(results);
     setCurrentPage(1); // Reset to page 1 when filters change
@@ -100,7 +110,8 @@ export default function HomePage() {
       {/* 📊 Stats Bar */}
       <div className="stats-bar">
         <p>
-          <strong>{bookCount}</strong> {bookCount === 1 ? "Book" : "Books"} Found
+          <strong>{bookCount}</strong> {bookCount === 1 ? "Book" : "Books"}{" "}
+          Found
         </p>
         <p>
           ⭐ <strong>{avgRating}</strong> Average Rating

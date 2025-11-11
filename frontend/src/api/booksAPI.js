@@ -53,4 +53,3 @@ export async function updateBook(id, updatedData) {
     return null;
   }
 }
-

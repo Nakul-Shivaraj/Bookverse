@@ -1,4 +1,4 @@
-import React, { useEffect, useState, useCallback } from "react";
+import { useEffect, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { fetchBooks, deleteBook } from "../api/booksAPI";
@@ -17,7 +17,8 @@ function Rating({ value }) {
   ));
   return (
     <span className="rating-display">
-      {stars} <span className="rating-number">{v ? `(${v.toFixed(1)})` : ""}</span>
+      {stars}
+      <span className="rating-number">{v ? `(${v.toFixed(1)})` : ""}</span>
     </span>
   );
 }
@@ -46,7 +47,8 @@ export default function BookDetailPage() {
   }, [loadBook]);
 
   const handleDelete = async () => {
-    if (!window.confirm(`Are you sure you want to delete "${book.title}"?`)) return;
+    if (!window.confirm(`Are you sure you want to delete "${book.title}"?`))
+      return;
     const success = await deleteBook(book._id);
     if (success) {
       alert("🗑️ Book deleted successfully!");
@@ -56,7 +58,8 @@ export default function BookDetailPage() {
     }
   };
 
-  if (!book) return <p style={{ textAlign: "center", marginTop: 40 }}>Loading...</p>;
+  if (!book)
+    return <p style={{ textAlign: "center", marginTop: 40 }}>Loading...</p>;
 
   const placeholder = "https://placehold.co/200x300?text=No+Cover";
 
@@ -65,18 +68,40 @@ export default function BookDetailPage() {
       {!isEditing ? (
         <>
           <div className="book-detail-header">
-            <img src={book.coverImage || placeholder} alt={book.title} className="book-detail-img" />
+            <img
+              src={book.coverImage || placeholder}
+              alt={book.title}
+              className="book-detail-img"
+            />
 
             <div className="book-detail-info">
               <h2 className="book-detail-title">{book.title}</h2>
-              <p><strong>Author:</strong> {book.author}</p>
-              {book.genre && <p><strong>Genre:</strong> {book.genre}</p>}
-              <p><strong>Rating:</strong> <Rating value={book.rating} /></p>
-              {book.description && <p><strong>Description:</strong> {book.description}</p>}
+              <p>
+                <strong>Author:</strong> {book.author}
+              </p>
+              {book.genre && (
+                <p>
+                  <strong>Genre:</strong> {book.genre}
+                </p>
+              )}
+              <p>
+                <strong>Rating:</strong> <Rating value={book.rating} />
+              </p>
+              {book.description && (
+                <p>
+                  <strong>Description:</strong> {book.description}
+                </p>
+              )}
               <div className="book-detail-buttons">
-                <button className="edit-btn" onClick={() => setIsEditing(true)}>✏️ Edit</button>
-                <button className="delete-btn" onClick={handleDelete}>🗑️ Delete</button>
-                <Link to="/" className="back-link">← Back</Link>
+                <button className="edit-btn" onClick={() => setIsEditing(true)}>
+                  ✏️ Edit
+                </button>
+                <button className="delete-btn" onClick={handleDelete}>
+                  🗑️ Delete
+                </button>
+                <Link to="/" className="back-link">
+                  ← Back
+                </Link>
               </div>
             </div>
           </div>

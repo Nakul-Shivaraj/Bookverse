@@ -12,7 +12,7 @@ export default function App() {
 
   const handleBookAdded = () => {
     setShowModal(false);
-    setRefreshTrigger(prev => prev + 1);
+    setRefreshTrigger((prev) => prev + 1);
   };
 
   return (

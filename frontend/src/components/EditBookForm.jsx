@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import PropTypes from "prop-types";
 import { useNavigate } from "react-router-dom";
 import { updateBook } from "../api/booksAPI";
@@ -18,9 +18,10 @@ export default function EditBookForm({ book, onBookUpdated }) {
   const navigate = useNavigate();
 
   const handleChange = (e) => {
-    const value = e.target.name === 'rating' && e.target.value 
-      ? Number(e.target.value) 
-      : e.target.value;
+    const value =
+      e.target.name === "rating" && e.target.value
+        ? Number(e.target.value)
+        : e.target.value;
     setFormData({ ...formData, [e.target.name]: value });
   };
 

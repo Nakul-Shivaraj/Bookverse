@@ -1,4 +1,4 @@
-import React, { useEffect, useState } from "react";
+import { useEffect, useState } from "react";
 import PropTypes from "prop-types";
 import {
   fetchReviews,
@@ -39,7 +39,7 @@ export default function BookReviews({ bookId, onReviewsUpdated }) {
     try {
       const updated = await updateReview(reviewId, { rating, content });
       setReviews((prev) =>
-        prev.map((r) => (r._id === updated._id ? updated : r))
+        prev.map((r) => (r._id === updated._id ? updated : r)),
       );
       onReviewsUpdated?.();
     } catch (err) {
@@ -188,10 +188,7 @@ function ReviewItem({ review, onUpdate, onDelete }) {
             <button className="btn-edit" onClick={() => setIsEditing(true)}>
               ✏️ Edit
             </button>
-            <button
-              className="btn-delete"
-              onClick={() => onDelete(review._id)}
-            >
+            <button className="btn-delete" onClick={() => onDelete(review._id)}>
               🗑️ Delete
             </button>
           </div>

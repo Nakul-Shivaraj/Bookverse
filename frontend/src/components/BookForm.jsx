@@ -1,4 +1,4 @@
-import React, { useState } from "react";
+import { useState } from "react";
 import PropTypes from "prop-types";
 import { addBook } from "../api/booksAPI";
 import "../styles/BookForm.css";
@@ -54,8 +54,12 @@ export default function BookForm({ onBookAdded }) {
       setSubmitting(true);
       await addBook(newBook);
       setMessage("✅ Book added successfully!");
-      setTitle(""); setAuthor(""); setGenre("");
-      setRating(""); setCoverImage(""); setDescription("");
+      setTitle("");
+      setAuthor("");
+      setGenre("");
+      setRating("");
+      setCoverImage("");
+      setDescription("");
       onBookAdded && onBookAdded();
     } catch (err) {
       console.error(err);

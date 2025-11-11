@@ -1,29 +1,57 @@
-import js from '@eslint/js'
-import globals from 'globals'
-import reactHooks from 'eslint-plugin-react-hooks'
-import reactRefresh from 'eslint-plugin-react-refresh'
-import { defineConfig, globalIgnores } from 'eslint/config'
+import globals from "globals";
+import js from "@eslint/js";
+import eslintConfigPrettier from "eslint-config-prettier";
+import prettier from "eslint-plugin-prettier";
 
-export default defineConfig([
-  globalIgnores(['dist']),
+export default [
   {
-    files: ['**/*.{js,jsx}'],
-    extends: [
-      js.configs.recommended,
-      reactHooks.configs['recommended-latest'],
-      reactRefresh.configs.vite,
-    ],
+    files: ["**/*.{js,jsx,mjs,cjs,ts,tsx}"],
+
     languageOptions: {
-      ecmaVersion: 2020,
-      globals: globals.browser,
+      ecmaVersion: "latest",
+      sourceType: "module",
       parserOptions: {
-        ecmaVersion: 'latest',
-        ecmaFeatures: { jsx: true },
-        sourceType: 'module',
+        ecmaFeatures: {
+          jsx: true,
+        },
+      },
+
+      globals: {
+        ...globals.browser,
+        ...globals.node,
+        ...globals.es2025,
       },
     },
+    plugins: {
+      prettier: prettier,
+    },
     rules: {
-      'no-unused-vars': ['error', { varsIgnorePattern: '^[A-Z_]' }],
+      // ESLint recommended rules
+      ...js.configs.recommended.rules,
+
+      indent: [
+        "error",
+        2,
+        {
+          SwitchCase: 1,
+        },
+      ],
+
+      // allow different OS line endings (CRLF on Windows). Use Prettier's auto handling.
+      "linebreak-style": "off",
+      quotes: ["error", "double"],
+      semi: ["error", "always"],
+      "no-console": 0,
+
+      // Prettier integration - this runs Prettier through ESLint
+      // Allow endOfLine to be handled automatically so Windows CRLF doesn't fail.
+      "prettier/prettier": [
+        "error",
+        {
+          endOfLine: "auto",
+        },
+      ],
     },
   },
-])
+  eslintConfigPrettier,
+];

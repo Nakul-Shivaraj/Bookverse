@@ -1,4 +1,3 @@
-import React from "react";
 import PropTypes from "prop-types";
 import { Link } from "react-router-dom";
 import { deleteBook } from "../api/booksAPI";
@@ -8,16 +7,21 @@ function Rating({ value }) {
   const v = Number(value) || 0;
   const full = Math.floor(v);
   const stars = Array.from({ length: 5 }, (_, i) =>
-    i < full ? "★" : "☆"
+    i < full ? "★" : "☆",
   ).join("");
-  return <span className="rating">{stars} {v ? `(${v.toFixed(1)})` : ""}</span>;
+  return (
+    <span className="rating">
+      {stars} {v ? `(${v.toFixed(1)})` : ""}
+    </span>
+  );
 }
 
 export default function BookCard({ book, onBookDeleted }) {
   const placeholder = "https://placehold.co/200x300?text=No+Cover";
 
   const handleDelete = async () => {
-    if (!window.confirm(`Are you sure you want to delete "${book.title}"?`)) return;
+    if (!window.confirm(`Are you sure you want to delete "${book.title}"?`))
+      return;
 
     try {
       const success = await deleteBook(book._id);

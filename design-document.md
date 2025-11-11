@@ -101,7 +101,7 @@ The app handles two MongoDB collections:
 ## 6. Architecture Overview
 **Frontend:**
 - React functional components using Hooks (`useState`, `useEffect`).  
-- Components: `BookCard`, `BookDetailPage`, `BookForm`, `BookReviews`, `ReviewForm`, `ReviewList`.  
+- Components: `BookCard`, `BookDetailPage`, `BookForm`, `BookReviews`.  
 - CSS modularized per component.  
 - Vite for fast dev server and build optimization.
 

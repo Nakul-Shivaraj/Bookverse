@@ -7,7 +7,7 @@
 ## Features
 - Two MongoDB collections:
     - books — for book details (title, author, genre, status, notes)
-    - genres — for categorizing books
+    - reviews — for book reviews 
 - RESTful API built with Express using MongoDB native driver
 - Client-side rendering using Vanilla JavaScript
 - Organized folder structure:
@@ -45,12 +45,14 @@ I used ChatGPT to assist with:
    - Implementing frontend pagination and edit/delete confirmation modals.
    - Generating the README.md, DESIGN_DOCUMENT.md, and LICENSE structure for rubric compliance.
    - Code review and removing unwanted code.
+   - seed data creation 
 
 ### Example Prompts
 - Implement pagination component with items per page selector
 - Show how to render data dynamically and cards can be added in UI with JS
 - Create a rubric-ready README for a Node + Mongo full-stack app.
 - Review my code and check if statisfies the rubric or not.
+- Create seed data for 1000 records and image url should be copyright free
 
 All AI-generated code was reviewed, tested, and manually refined before inclusion.
 
@@ -58,12 +60,12 @@ All AI-generated code was reviewed, tested, and manually refined before inclusio
 MIT License
 
 ## Screenshots
-![Homepage](./screenshots/home.png)
-![Add Book](./screenshots/add-book.png)
-![Manage Genres](./screenshots/genres.png)
+![Homepage](./screenshots/HomePage.png)
+![Add Book](./screenshots/AddBook.png)
+![Book Details Page](./screenshots/BookDetails.png)
 
 ## Demo video
-Watch a short walkthrough: ![Watch the video](./Demo.mp4)
+Watch a short walkthrough: ![Watch the video](https://youtu.be/8S0kGxmmCCM)
 
 ## How to Use BookVerse
 1. **Add a Book**
