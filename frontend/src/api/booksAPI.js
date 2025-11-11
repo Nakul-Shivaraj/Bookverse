@@ -1,4 +1,6 @@
-const API_BASE = "/api/books"; // Vite will proxy to backend
+const API_BASE = import.meta.env.PROD
+  ? "https://bookverse-backend-p06v.onrender.com/api/books"
+  : "/api/books";
 
 export async function fetchBooks() {
   const res = await fetch(API_BASE);
@@ -19,7 +21,7 @@ export async function addBook(newBook) {
 // DELETE a book by ID
 export async function deleteBook(id) {
   try {
-    const res = await fetch(`/api/books/${id}`, { method: "DELETE" });
+    const res = await fetch(`${API_BASE}/${id}`, { method: "DELETE" });
     if (!res.ok) throw new Error("Failed to delete book");
     return await res.json();
   } catch (err) {
@@ -30,7 +32,7 @@ export async function deleteBook(id) {
 
 export async function updateBook(id, updatedData) {
   try {
-    const res = await fetch(`/api/books/${id}`, {
+    const res = await fetch(`${API_BASE}/${id}`, {
       method: "PUT",
       headers: { "Content-Type": "application/json" },
       body: JSON.stringify(updatedData),
