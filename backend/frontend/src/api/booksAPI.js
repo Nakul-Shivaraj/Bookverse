@@ -1,6 +1,4 @@
-const API_BASE = import.meta.env.PROD
-  ? "https://bookverse-backend-p06v.onrender.com/api/books"
-  : "/api/books";
+const API_BASE = "/api/books";
 
 export async function fetchBooks() {
   const res = await fetch(API_BASE);

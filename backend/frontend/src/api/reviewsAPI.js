@@ -1,6 +1,4 @@
-const API_BASE = import.meta.env.PROD
-  ? "https://bookverse-backend-p06v.onrender.com/api/reviews"
-  : "/api/reviews";
+const API_BASE = "/api/reviews";
 
 // Fetch all reviews for a specific book
 export async function fetchReviews(bookId) {
