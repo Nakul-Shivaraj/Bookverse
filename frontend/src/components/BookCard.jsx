@@ -1,6 +1,9 @@
+import React from "react";
 import PropTypes from "prop-types";
-import { Link } from "react-router-dom";
+import { Link, useNavigate } from "react-router-dom";
 import { deleteBook } from "../api/booksAPI";
+import { useAuth } from "../context/AuthContext";
+import { useToast } from "./Toast";
 import "../styles/BookCard.css";
 
 function Rating({ value }) {
@@ -18,22 +21,34 @@ function Rating({ value }) {
 
 export default function BookCard({ book, onBookDeleted }) {
   const placeholder = "https://placehold.co/200x300?text=No+Cover";
+  const { isAuthenticated } = useAuth();
+  const { addToast } = useToast();
+  const navigate = useNavigate();
 
   const handleDelete = async () => {
+    if (!isAuthenticated) {
+      addToast("Please login to delete books", "warning");
+      navigate("/login");
+      return;
+    }
+
     if (!window.confirm(`Are you sure you want to delete "${book.title}"?`))
       return;
 
     try {
       const success = await deleteBook(book._id);
       if (success) {
-        alert(`🗑️ "${book.title}" deleted successfully`);
+        addToast(`"${book.title}" deleted successfully`, "success");
         if (onBookDeleted) onBookDeleted(book._id);
       } else {
-        alert("❌ Failed to delete book. Please try again.");
+        addToast(
+          "Failed to delete book. You may not have permission.",
+          "error",
+        );
       }
     } catch (err) {
       console.error("Error deleting:", err);
-      alert("❌ Server error while deleting book.");
+      addToast("Failed to delete book. Please try again.", "error");
     }
   };
 

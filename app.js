@@ -6,6 +6,7 @@ import { fileURLToPath } from "url";
 import indexRouter from "./routes/index.js";
 import booksRouter from "./routes/books.js";
 import reviewsRouter from "./routes/reviews.js";
+import authRouter from "./routes/auth.js";
 
 const app = express();
 const __filename = fileURLToPath(import.meta.url);
@@ -17,8 +18,8 @@ app.use(express.urlencoded({ extended: false }));
 app.use(cookieParser());
 app.use(express.static(path.join(__dirname, "frontend/dist")));
 
-
-// Routes
+// API Routes
+app.use("/api/auth", authRouter);
 app.use("/api/books", booksRouter);
 app.use("/api/reviews", reviewsRouter);
 app.use("/", indexRouter);

@@ -1,6 +1,7 @@
 import express from "express";
 import { ObjectId } from "mongodb";
 import { connectDB } from "../db/connect.js";
+import { authenticateToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
@@ -17,34 +18,7 @@ async function recalculateBookRating(db, bookId) {
     .updateOne({ _id: new ObjectId(bookId) }, { $set: { rating: avg } });
 }
 
-/** CREATE a Review */
-router.post("/", async (req, res) => {
-  try {
-    const db = await connectDB();
-    const { bookId, rating, content } = req.body;
-
-    if (!bookId || !rating || !content) {
-      return res.status(400).json({ message: "Missing required fields" });
-    }
-
-    const review = {
-      bookId,
-      rating: Number(rating),
-      content,
-      createdAt: new Date(),
-    };
-
-    const result = await db.collection("reviews").insertOne(review);
-    await recalculateBookRating(db, bookId);
-
-    res.status(201).json({ _id: result.insertedId, ...review });
-  } catch (err) {
-    console.error("POST /reviews error:", err);
-    res.status(500).json({ message: "Failed to create review" });
-  }
-});
-
-/** READ all reviews for a book */
+// READ all reviews for a book - PUBLIC
 router.get("/", async (req, res) => {
   try {
     const db = await connectDB();
@@ -64,8 +38,37 @@ router.get("/", async (req, res) => {
   }
 });
 
-/** UPDATE a Review */
-router.put("/:id", async (req, res) => {
+// CREATE a Review - PROTECTED
+router.post("/", authenticateToken, async (req, res) => {
+  try {
+    const db = await connectDB();
+    const { bookId, rating, content } = req.body;
+
+    if (!bookId || !rating || !content) {
+      return res.status(400).json({ message: "Missing required fields" });
+    }
+
+    const review = {
+      bookId,
+      rating: Number(rating),
+      content,
+      userId: req.user.userId,
+      username: req.user.username,
+      createdAt: new Date(),
+    };
+
+    const result = await db.collection("reviews").insertOne(review);
+    await recalculateBookRating(db, bookId);
+
+    res.status(201).json({ _id: result.insertedId, ...review });
+  } catch (err) {
+    console.error("POST /reviews error:", err);
+    res.status(500).json({ message: "Failed to create review" });
+  }
+});
+
+// UPDATE a Review - PROTECTED
+router.put("/:id", authenticateToken, async (req, res) => {
   try {
     const db = await connectDB();
     const { id } = req.params;
@@ -79,6 +82,11 @@ router.put("/:id", async (req, res) => {
 
     if (!existing) {
       return res.status(404).json({ message: "Review not found" });
+    }
+
+    // Check if user owns this review
+    if (existing.userId !== req.user.userId) {
+      return res.status(403).json({ message: "You can only edit your reviews" });
     }
 
     const updateData = {
@@ -101,8 +109,8 @@ router.put("/:id", async (req, res) => {
   }
 });
 
-/** DELETE a Review */
-router.delete("/:id", async (req, res) => {
+// DELETE a Review - PROTECTED
+router.delete("/:id", authenticateToken, async (req, res) => {
   try {
     const db = await connectDB();
     const { id } = req.params;
@@ -112,13 +120,23 @@ router.delete("/:id", async (req, res) => {
     }
 
     const review = await db.collection("reviews").findOne({ _id: new ObjectId(id) });
+    
+    if (!review) {
+      return res.status(404).json({ message: "Review not found" });
+    }
+
+    // Check if user owns this review
+    if (review.userId !== req.user.userId) {
+      return res.status(403).json({ message: "You can only delete your own reviews" });
+    }
+
     const result = await db.collection("reviews").deleteOne({ _id: new ObjectId(id) });
 
     if (!result.deletedCount) {
       return res.status(404).json({ message: "Review not found" });
     }
 
-    if (review) await recalculateBookRating(db, review.bookId);
+    await recalculateBookRating(db, review.bookId);
 
     res.json({ success: true });
   } catch (err) {

@@ -1,5 +1,8 @@
-import { useEffect, useState } from "react";
+import React, { useEffect, useState } from "react";
 import PropTypes from "prop-types";
+import { useNavigate } from "react-router-dom";
+import { useAuth } from "../context/AuthContext";
+import { useToast } from "./Toast";
 import {
   fetchReviews,
   addReview,
@@ -8,12 +11,11 @@ import {
 } from "../api/reviewsAPI";
 import "../styles/BookReviews.css";
 
-/**
- * Displays and manages all reviews for a given book.
- * Automatically notifies parent (BookDetailPage) when reviews change.
- */
 export default function BookReviews({ bookId, onReviewsUpdated }) {
   const [reviews, setReviews] = useState([]);
+  const { isAuthenticated } = useAuth();
+  const { addToast } = useToast();
+  const navigate = useNavigate();
 
   useEffect(() => {
     if (!bookId) return;
@@ -22,19 +24,23 @@ export default function BookReviews({ bookId, onReviewsUpdated }) {
       .catch((err) => console.error("Error fetching reviews:", err));
   }, [bookId]);
 
-  // --- Add Review ---
   const handleAddReview = async (rating, content) => {
+    if (!isAuthenticated) {
+      addToast("Please login to write a review", "warning");
+      navigate("/login");
+      return;
+    }
+
     try {
       const newReview = await addReview({ bookId, rating, content });
       setReviews((prev) => [newReview, ...prev]);
-      onReviewsUpdated?.(); // 🔄 update parent book rating
+      onReviewsUpdated?.();
+      addToast("Review added successfully!", "success");
     } catch (err) {
-      alert("❌ Failed to add review");
-      console.error(err);
+      addToast(err.message || "Failed to add review", "error");
     }
   };
 
-  // --- Update Review ---
   const handleUpdateReview = async (reviewId, rating, content) => {
     try {
       const updated = await updateReview(reviewId, { rating, content });
@@ -42,20 +48,30 @@ export default function BookReviews({ bookId, onReviewsUpdated }) {
         prev.map((r) => (r._id === updated._id ? updated : r)),
       );
       onReviewsUpdated?.();
+      addToast("Review updated successfully!", "success");
     } catch (err) {
-      console.error("Error updating review:", err);
+      addToast(
+        err.message ||
+          "Failed to update review. You can only edit your own reviews.",
+        "error",
+      );
     }
   };
 
-  // --- Delete Review ---
   const handleDeleteReview = async (reviewId) => {
+    if (!window.confirm("Are you sure you want to delete this review?")) return;
+
     try {
       await deleteReview(reviewId);
       setReviews((prev) => prev.filter((r) => r._id !== reviewId));
       onReviewsUpdated?.();
+      addToast("Review deleted successfully!", "success");
     } catch (err) {
-      console.error("Error deleting review:", err);
-      alert("❌ Failed to delete review");
+      addToast(
+        err.message ||
+          "Failed to delete review. You can only delete your own reviews.",
+        "error",
+      );
     }
   };
 
@@ -77,9 +93,8 @@ BookReviews.propTypes = {
   onReviewsUpdated: PropTypes.func,
 };
 
-/* ------------------------- Subcomponents ------------------------- */
+/* Subcomponents */
 
-/** Add Review Form */
 function ReviewForm({ onAdd }) {
   const [rating, setRating] = useState(5);
   const [content, setContent] = useState("");
@@ -127,7 +142,6 @@ ReviewForm.propTypes = {
   onAdd: PropTypes.func.isRequired,
 };
 
-/** Review List */
 function ReviewList({ reviews, onUpdate, onDelete }) {
   if (!reviews.length) {
     return <p className="no-reviews">No reviews yet. Be the first!</p>;
@@ -153,11 +167,14 @@ ReviewList.propTypes = {
   onDelete: PropTypes.func.isRequired,
 };
 
-/** Single Review Card */
 function ReviewItem({ review, onUpdate, onDelete }) {
   const [isEditing, setIsEditing] = useState(false);
   const [content, setContent] = useState(review.content);
   const [rating, setRating] = useState(review.rating);
+  const { user } = useAuth(); // ✅ Import useAuth at top of file
+
+  // Check if current user owns this review
+  const isOwner = user && review.userId === user.id?.toString();
 
   async function handleSave() {
     if (!content.trim()) return;
@@ -180,18 +197,26 @@ function ReviewItem({ review, onUpdate, onDelete }) {
             ))}
           </div>
           <p className="review-content">{review.content}</p>
+          <small className="review-author">
+            by {review.username || "Anonymous"}
+          </small>
           <small className="review-date">
             {new Date(review.createdAt).toLocaleString()}
           </small>
 
-          <div className="review-actions">
-            <button className="btn-edit" onClick={() => setIsEditing(true)}>
-              ✏️ Edit
-            </button>
-            <button className="btn-delete" onClick={() => onDelete(review._id)}>
-              🗑️ Delete
-            </button>
-          </div>
+          {isOwner && (
+            <div className="review-actions">
+              <button className="btn-edit" onClick={() => setIsEditing(true)}>
+                ✏️ Edit
+              </button>
+              <button
+                className="btn-delete"
+                onClick={() => onDelete(review._id)}
+              >
+                🗑️ Delete
+              </button>
+            </div>
+          )}
         </>
       ) : (
         <>

@@ -70,7 +70,11 @@ export default function HomePage() {
         results.sort((a, b) => (b.rating || 0) - (a.rating || 0));
         break;
       case "Title":
-        results.sort((a, b) => a.title.localeCompare(b.title));
+        results.sort((a, b) => {
+          const cleanTitle = (title) =>
+            title.replace(/^The\s+/i, "").toLowerCase();
+          return cleanTitle(a.title).localeCompare(cleanTitle(b.title));
+        });
         break;
       default:
         results.sort((a, b) => new Date(b.createdAt) - new Date(a.createdAt));

@@ -1,34 +1,11 @@
 import express from "express";
 import { connectDB } from "../db/connect.js";
 import { ObjectId } from "mongodb";
+import { authenticateToken } from "../middleware/auth.js";
 
 const router = express.Router();
 
-// CREATE a new book
-router.post("/", async (req, res) => {
-  try {
-    const db = await connectDB();
-    
-    // Add timestamps
-    const newBook = {
-      ...req.body,
-      createdAt: new Date(),
-      updatedAt: new Date()
-    };
-    
-    const result = await db.collection("books").insertOne(newBook);
-    
-    // Return the created book with its ID
-    res.status(201).json({
-      _id: result.insertedId,
-      ...newBook
-    });
-  } catch (err) {
-    res.status(500).json({ error: err.message });
-  }
-});
-
-// GET all books
+// GET all books - PUBLIC (anyone can view)
 router.get("/", async (req, res) => {
   try {
     const db = await connectDB();
@@ -39,65 +16,105 @@ router.get("/", async (req, res) => {
   }
 });
 
-// UPDATE a book (PUT)
-router.put("/:id", async (req, res) => {
+// CREATE a new book - PROTECTED (login required)
+router.post("/", authenticateToken, async (req, res) => {
   try {
-    const { id } = req.params;
     const db = await connectDB();
+    const { title, author, description } = req.body;
 
-    if (!ObjectId.isValid(id)) {
-      return res.status(400).json({ message: "Invalid ID format" });
+    // Validation
+    if (!title || !author) {
+      return res.status(400).json({ message: "Title and author are required" });
     }
 
-    // Add updatedAt timestamp
-    const updateData = {
-      ...req.body,
-      updatedAt: new Date()
+    const newBook = {
+      title,
+      author,
+      description: description || "",
+      userId: req.user.userId, // track owner
+      createdAt: new Date(),
+      updatedAt: new Date(),
     };
 
-    const result = await db.collection("books").findOneAndUpdate(
-      { _id: new ObjectId(id) },
-      { $set: updateData },
-      { returnDocument: "after" }
-    );
+    const result = await db.collection("books").insertOne(newBook);
 
-    const updatedBook = result.value || result;
-
-    if (!updatedBook) {
-      return res.status(404).json({ message: "Book not found" });
-    }
-
-    res.json(updatedBook);
-  } catch (error) {
-    console.error("Error updating book:", error);
-    res.status(500).json({ message: "Failed to update book" });
+    res.status(201).json({
+      _id: result.insertedId,
+      ...newBook,
+    });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 
-// DELETE a book
-router.delete("/:id", async (req, res) => {
+// UPDATE a book - PROTECTED (login required)
+router.put("/:id", authenticateToken, async (req, res) => {
   try {
-    const { id } = req.params;
     const db = await connectDB();
+    const { id } = req.params;
 
     if (!ObjectId.isValid(id)) {
       return res.status(400).json({ message: "Invalid ID format" });
     }
 
-    // Also delete all reviews for this book
-    await db.collection("reviews").deleteMany({ bookId: id });
+    const existing = await db.collection("books").findOne({ _id: new ObjectId(id) });
 
-    // Delete the book
-    const result = await db.collection("books").deleteOne({ _id: new ObjectId(id) });
-
-    if (result.deletedCount === 0) {
+    if (!existing) {
       return res.status(404).json({ message: "Book not found" });
     }
 
-    res.json({ message: "✅ Book and its reviews deleted successfully" });
-  } catch (error) {
-    console.error("Error deleting book:", error);
-    res.status(500).json({ message: "❌ Failed to delete book" });
+    // Ensure user owns the book
+    if (existing.userId !== req.user.userId) {
+      return res.status(403).json({ message: "You can only edit your own books" });
+    }
+
+    const updateData = {
+      ...req.body,
+      updatedAt: new Date(),
+    };
+
+    await db.collection("books").updateOne(
+      { _id: new ObjectId(id) },
+      { $set: updateData }
+    );
+
+    const updatedBook = await db.collection("books").findOne({ _id: new ObjectId(id) });
+    res.json(updatedBook);
+
+  } catch (err) {
+    res.status(500).json({ message: err.message });
+  }
+});
+
+// DELETE a book - PROTECTED (login required)
+router.delete("/:id", authenticateToken, async (req, res) => {
+  try {
+    const db = await connectDB();
+    const { id } = req.params;
+
+    if (!ObjectId.isValid(id)) {
+      return res.status(400).json({ message: "Invalid ID format" });
+    }
+
+    const book = await db.collection("books").findOne({ _id: new ObjectId(id) });
+
+    if (!book) {
+      return res.status(404).json({ message: "Book not found" });
+    }
+
+    // Check if user owns the book
+    if (book.userId !== req.user.userId) {
+      return res.status(403).json({ message: "You can only delete your own books" });
+    }
+
+    // Delete reviews for this book (bookId is stored as string)
+    await db.collection("reviews").deleteMany({ bookId: id });
+
+    await db.collection("books").deleteOne({ _id: new ObjectId(id) });
+
+    res.json({ message: "Book and its reviews deleted successfully" });
+  } catch (err) {
+    res.status(500).json({ error: err.message });
   }
 });
 

@@ -2,6 +2,8 @@ import { useEffect, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { useParams, Link, useNavigate } from "react-router-dom";
 import { fetchBooks, deleteBook } from "../api/booksAPI";
+import { useAuth } from "../context/AuthContext";
+import { useToast } from "../components/Toast";
 import EditBookForm from "../components/EditBookForm";
 import BookReviews from "../components/BookReviews";
 import "../styles/BookDetailPage.css";
@@ -31,6 +33,8 @@ export default function BookDetailPage() {
   const { id } = useParams();
   const [book, setBook] = useState(null);
   const [isEditing, setIsEditing] = useState(false);
+  const { isAuthenticated, user } = useAuth();
+  const { addToast } = useToast();
   const navigate = useNavigate();
 
   const loadBook = useCallback(() => {
@@ -46,15 +50,39 @@ export default function BookDetailPage() {
     loadBook();
   }, [loadBook]);
 
+  const handleEdit = () => {
+    if (!isAuthenticated) {
+      addToast("Please login to edit books", "warning");
+      navigate("/login");
+      return;
+    }
+    setIsEditing(true);
+  };
+
   const handleDelete = async () => {
+    if (!isAuthenticated) {
+      addToast("Please login to delete books", "warning");
+      navigate("/login");
+      return;
+    }
+
     if (!window.confirm(`Are you sure you want to delete "${book.title}"?`))
       return;
-    const success = await deleteBook(book._id);
-    if (success) {
-      alert("🗑️ Book deleted successfully!");
-      navigate("/");
-    } else {
-      alert("❌ Failed to delete book.");
+
+    try {
+      const success = await deleteBook(book._id);
+      if (success) {
+        addToast("Book deleted successfully!", "success");
+        navigate("/");
+      } else {
+        addToast(
+          "Failed to delete book. You may not have permission.",
+          "error",
+        );
+      }
+    } catch (err) {
+      addToast("Failed to delete book", "error");
+      console.log(err);
     }
   };
 
@@ -62,6 +90,7 @@ export default function BookDetailPage() {
     return <p style={{ textAlign: "center", marginTop: 40 }}>Loading...</p>;
 
   const placeholder = "https://placehold.co/200x300?text=No+Cover";
+  //const isOwner = user && book.userId === user.id.toString();
 
   return (
     <div className="book-detail">
@@ -93,12 +122,16 @@ export default function BookDetailPage() {
                 </p>
               )}
               <div className="book-detail-buttons">
-                <button className="edit-btn" onClick={() => setIsEditing(true)}>
-                  ✏️ Edit
-                </button>
-                <button className="delete-btn" onClick={handleDelete}>
-                  🗑️ Delete
-                </button>
+                {isAuthenticated && (
+                  <>
+                    <button className="edit-btn" onClick={handleEdit}>
+                      ✏️ Edit
+                    </button>
+                    <button className="delete-btn" onClick={handleDelete}>
+                      🗑️ Delete
+                    </button>
+                  </>
+                )}
                 <Link to="/" className="back-link">
                   ← Back
                 </Link>
@@ -106,7 +139,6 @@ export default function BookDetailPage() {
             </div>
           </div>
 
-          {/* Reviews */}
           <BookReviews bookId={book._id} onReviewsUpdated={loadBook} />
         </>
       ) : (
