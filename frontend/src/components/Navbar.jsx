@@ -33,6 +33,12 @@ export default function Navbar({ onAddBookClick }) {
           Home
         </Link>
 
+        {isAuthenticated && (
+          <Link to="/library" className="nav-link">
+            My Library
+          </Link>
+        )}
+
         {isAuthenticated ? (
           <>
             <span className="user-greeting">Hi, {user?.username}!</span>

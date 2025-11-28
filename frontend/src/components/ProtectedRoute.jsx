@@ -2,14 +2,17 @@ import React from "react";
 import PropTypes from "prop-types";
 import { Navigate } from "react-router-dom";
 import { useAuth } from "../context/AuthContext";
+import "../styles/ProtectedRoute.css";
 
 export default function ProtectedRoute({ children }) {
   const { isAuthenticated, loading } = useAuth();
 
   if (loading) {
     return (
-      <div style={{ textAlign: "center", marginTop: 100 }}>
-        <p>Loading...</p>
+      <div className="protected-route-loading">
+        <div className="protected-route-loading-container">
+          <p>Loading...</p>
+        </div>
       </div>
     );
   }

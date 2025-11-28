@@ -18,7 +18,13 @@ export function AuthProvider({ children }) {
       if (isAuthenticated()) {
         try {
           const userData = await getCurrentUser();
-          setUser(userData);
+          // Normalize user data
+          const normalizedUser = {
+            ...userData,
+            id: userData._id || userData.id,
+            userId: userData._id?.toString?.() || userData._id || userData.id,
+          };
+          setUser(normalizedUser);
         } catch (err) {
           console.error("Auth check failed:", err);
           setUser(null);
@@ -35,6 +41,10 @@ export function AuthProvider({ children }) {
     const normalizedUser = {
       ...userData,
       id: userData.id || userData._id,
+      userId:
+        (userData.id || userData._id)?.toString?.() ||
+        userData.id ||
+        userData._id,
     };
     setUser(normalizedUser);
   };

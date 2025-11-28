@@ -1,11 +1,13 @@
 import { useEffect, useState, useCallback } from "react";
 import PropTypes from "prop-types";
 import { useParams, Link, useNavigate } from "react-router-dom";
-import { fetchBooks, deleteBook } from "../api/booksAPI";
+import { fetchBooks, deleteBook, updateBook, updateBookProgress } from "../api/booksAPI";
 import { useAuth } from "../context/AuthContext";
 import { useToast } from "../components/Toast";
 import EditBookForm from "../components/EditBookForm";
 import BookReviews from "../components/BookReviews";
+import ReadingStatusSelector from "../components/ReadingStatusSelector";
+import ProgressTracker from "../components/ProgressTracker";
 import "../styles/BookDetailPage.css";
 import "../styles/BookForm.css";
 import "../styles/BookReviews.css";
@@ -50,19 +52,20 @@ export default function BookDetailPage() {
     loadBook();
   }, [loadBook]);
 
-  const handleEdit = () => {
-    if (!isAuthenticated) {
-      addToast("Please login to edit books", "warning");
-      navigate("/login");
-      return;
-    }
-    setIsEditing(true);
-  };
+  if (!book) return <p className="loading-text">Loading...</p>;
+
+  const placeholder = "https://placehold.co/200x300?text=No+Cover";
+  const isOwner = user && book.userId === user.userId;
 
   const handleDelete = async () => {
     if (!isAuthenticated) {
       addToast("Please login to delete books", "warning");
       navigate("/login");
+      return;
+    }
+
+    if (!isOwner) {
+      addToast("You can only delete your own books", "warning");
       return;
     }
 
@@ -86,11 +89,50 @@ export default function BookDetailPage() {
     }
   };
 
-  if (!book)
-    return <p style={{ textAlign: "center", marginTop: 40 }}>Loading...</p>;
+  const handleStatusChange = async (newStatus) => {
+    if (!isAuthenticated) {
+      addToast("Please login to update reading status", "warning");
+      navigate("/login");
+      return;
+    }
 
-  const placeholder = "https://placehold.co/200x300?text=No+Cover";
-  //const isOwner = user && book.userId === user.id.toString();
+    try {
+      const updated = await updateBookProgress(book._id, {
+        readingStatus: newStatus,
+      });
+      if (updated) {
+        setBook(updated);
+        addToast("Reading status updated!", "success");
+      }
+    } catch (err) {
+      addToast("Failed to update status", "error");
+      console.log(err);
+    }
+  };
+
+  const handleProgressUpdate = async (progress) => {
+    if (!isAuthenticated) return;
+
+    try {
+      const updated = await updateBookProgress(book._id, { progress });
+      if (updated) {
+        setBook(updated);
+        addToast("Progress updated!", "success");
+      }
+    } catch (err) {
+      addToast("Failed to update progress", "error");
+      console.log(err);
+    }
+  };
+
+  const handleEdit = () => {
+    if (!isAuthenticated) {
+      addToast("Please login to edit books", "warning");
+      navigate("/login");
+      return;
+    }
+    setIsEditing(true);
+  };
 
   return (
     <div className="book-detail">
@@ -121,6 +163,25 @@ export default function BookDetailPage() {
                   <strong>Description:</strong> {book.description}
                 </p>
               )}
+
+              {/* Reading Status Selector - Available to all authenticated users */}
+              {isAuthenticated && (
+                <>
+                  <ReadingStatusSelector
+                    currentStatus={book.readingStatus || "want-to-read"}
+                    onStatusChange={handleStatusChange}
+                  />
+
+                  {/* Show progress tracker only when "reading" */}
+                  {book.readingStatus === "reading" && (
+                    <ProgressTracker
+                      progress={book.progress || { current: 0, total: 0 }}
+                      onProgressUpdate={handleProgressUpdate}
+                    />
+                  )}
+                </>
+              )}
+
               <div className="book-detail-buttons">
                 {isAuthenticated && (
                   <>

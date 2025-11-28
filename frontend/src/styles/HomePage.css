@@ -199,6 +199,15 @@ h2::after {
   animation: fadeUp 0.5s ease forwards;
 }
 
+.no-books-message {
+  grid-column: 1 / -1;
+  color: #555;
+  margin-top: 40px;
+  text-align: center;
+  font-size: 1rem;
+  font-weight: 500;
+}
+
 @keyframes fadeIn {
   from {
     opacity: 0;

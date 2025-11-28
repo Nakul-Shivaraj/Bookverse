@@ -171,7 +171,7 @@ export default function HomePage() {
             </div>
           ))
         ) : (
-          <p style={{ gridColumn: "1 / -1", color: "#555", marginTop: "40px" }}>
+          <p className="no-books-message">
             No books found matching your filters.
           </p>
         )}

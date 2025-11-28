@@ -4,6 +4,7 @@ import { AuthProvider } from "./context/AuthContext";
 import { ToastProvider } from "./components/Toast";
 import HomePage from "./pages/HomePage";
 import BookDetailPage from "./pages/BookDetailPage";
+import MyLibraryPage from "./pages/MyLibraryPage";
 import LoginPage from "./pages/LoginPage";
 import SignupPage from "./pages/SignupPage";
 import Navbar from "./components/Navbar";
@@ -32,6 +33,7 @@ export default function App() {
           <Routes>
             <Route path="/" element={<HomePage key={refreshTrigger} />} />
             <Route path="/book/:id" element={<BookDetailPage />} />
+            <Route path="/library" element={<MyLibraryPage />} />
             <Route path="/login" element={<LoginPage />} />
             <Route path="/signup" element={<SignupPage />} />
           </Routes>

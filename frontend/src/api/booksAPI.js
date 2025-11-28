@@ -70,3 +70,26 @@ export async function updateBook(id, updatedData) {
     return null;
   }
 }
+
+// Update reading status and progress (for all authenticated users, not just owners)
+export async function updateBookProgress(id, progressData) {
+  try {
+    const res = await fetch(`${API_BASE}/${id}/progress`, {
+      method: "PATCH",
+      headers: getAuthHeaders(),
+      body: JSON.stringify(progressData),
+    });
+
+    if (!res.ok) {
+      const errText = await res.text();
+      console.error("Response:", errText);
+      return null;
+    }
+
+    const data = await res.json();
+    return data;
+  } catch (err) {
+    console.error("Progress update error:", err);
+    return null;
+  }
+}
