@@ -73,25 +73,43 @@ export default function BookForm({ onBookAdded }) {
     <div className="book-form">
       <h2>Add a New Book</h2>
       <form onSubmit={handleSubmit}>
+        <label htmlFor="title" className="sr-only">
+          Title
+        </label>
         <input
+          id="title"
           type="text"
           placeholder="Title *"
           value={title}
           onChange={(e) => setTitle(e.target.value)}
+          aria-required="true"
         />
+        <label htmlFor="author" className="sr-only">
+          Author
+        </label>
         <input
+          id="author"
           type="text"
           placeholder="Author *"
           value={author}
           onChange={(e) => setAuthor(e.target.value)}
+          aria-required="true"
         />
+        <label htmlFor="genre" className="sr-only">
+          Genre
+        </label>
         <input
+          id="genre"
           type="text"
           placeholder="Genre (e.g., Fiction, Sci-Fi)"
           value={genre}
           onChange={(e) => brush(e.target.value, setGenre)}
         />
+        <label htmlFor="rating" className="sr-only">
+          Rating
+        </label>
         <input
+          id="rating"
           type="number"
           placeholder="Rating (1–5)"
           min="1"
@@ -99,13 +117,21 @@ export default function BookForm({ onBookAdded }) {
           value={rating}
           onChange={(e) => setRating(e.target.value)}
         />
+        <label htmlFor="coverImage" className="sr-only">
+          Cover Image URL
+        </label>
         <input
+          id="coverImage"
           type="url"
           placeholder="Cover Image URL (optional)"
           value={coverImage}
           onChange={(e) => setCoverImage(e.target.value)}
         />
+        <label htmlFor="description" className="sr-only">
+          Description
+        </label>
         <textarea
+          id="description"
           placeholder="Short description (optional)"
           rows={4}
           value={description}
@@ -115,7 +141,11 @@ export default function BookForm({ onBookAdded }) {
           {submitting ? "Adding…" : "➕ Add Book"}
         </button>
       </form>
-      {message && <p className="message">{message}</p>}
+      {message && (
+        <p className="message" role="status">
+          {message}
+        </p>
+      )}
     </div>
   );
 }

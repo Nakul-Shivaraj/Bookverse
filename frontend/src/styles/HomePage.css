@@ -4,6 +4,9 @@
   background: linear-gradient(135deg, #f8fdf9 0%, #e8f5e9 100%);
 }
 
+/* ==========================================
+   PAGE TITLE
+========================================== */
 h2 {
   margin: 0 0 35px 0;
   font-size: 2.2rem;
@@ -44,7 +47,7 @@ h2::after {
 
 .stats-bar p {
   margin: 0;
-  color: #374151;
+  color: #1f2937;
   font-size: 0.95rem;
   font-weight: 500;
   display: flex;
@@ -72,6 +75,7 @@ h2::after {
   margin-right: auto;
 }
 
+/* Search Input */
 .search-input {
   width: 100%;
   max-width: 500px;
@@ -95,6 +99,7 @@ h2::after {
   color: #9ca3af;
 }
 
+/* Genre Buttons */
 .genre-buttons {
   display: flex;
   flex-wrap: wrap;
@@ -197,15 +202,6 @@ h2::after {
 .fade-item {
   opacity: 0;
   animation: fadeUp 0.5s ease forwards;
-}
-
-.no-books-message {
-  grid-column: 1 / -1;
-  color: #555;
-  margin-top: 40px;
-  text-align: center;
-  font-size: 1rem;
-  font-weight: 500;
 }
 
 @keyframes fadeIn {

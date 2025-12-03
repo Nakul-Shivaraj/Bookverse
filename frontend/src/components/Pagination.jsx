@@ -16,9 +16,11 @@ export default function Pagination({
     <div className="pagination">
       {/* Items per page */}
       <select
+        id="itemsPerPage"
         value={itemsPerPage}
         onChange={(e) => onItemsPerPageChange(Number(e.target.value))}
         className="per-page"
+        aria-label="Items per page"
       >
         <option value={8}>8 per page</option>
         <option value={12}>12 per page</option>
